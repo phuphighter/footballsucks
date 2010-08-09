@@ -1,0 +1,43 @@
+= render :partial => "/home/nav.html.haml"
+
+%h2== League Historical Summary
+
+%span{:style => "font-size:0.9em"}
+  %i="Sort multiple columns simultaneously by holding down the shift key and clicking a second, third or even fourth column header"
+
+- form_tag "/records/historical", :method => "get", :style => "margin:10px 0px 10px 0px;" do
+  = select_tag "name", "<option value='All'>All</option>"+options_for_select(@names, :selected => params[:name]), {:onchange => "this.form.submit();"}
+
+%table{:id => "stats", :class => 'tablesorter'}
+  %thead
+    %tr
+      %th== Rank
+      %th== Reg. Season Rank
+      %th== Name
+      %th== Wins
+      %th== Losses
+      %th== Win %
+      %th== Points
+      %th== Draft Position
+      %th== Champion
+      %th== Year
+  
+  %tbody
+    - @summaries.each do |summary|
+      - unless summary.reg_season_rank.nil?
+    
+        %tr
+          %td== #{summary.rank}
+          %td== #{summary.reg_season_rank}
+          %td== #{summary.name}
+          %td== #{summary.wins}
+          %td== #{summary.losses}
+          %td== #{number_to_percentage(summary.win_percentage*100, :precision => 2)}
+          %td== #{summary.points}
+          %td== #{summary.draft_position}
+          %td== #{summary.champion}
+          %td== #{summary.year}
+
+- if params[:name] && params[:name] != "All"          
+  %div{:style => "margin-left:20px;"}
+    = google_vizualisation_tag(@points_chart)

@@ -1,0 +1,158 @@
+= render :partial => "/home/nav.html.haml"
+                
+%h2{:class => 'dotted'}
+  == Margin of Victory
+
+%table{:id => "victory", :class => 'tablesorter'}
+  %thead
+    %tr
+      %td== Largest Margin of Victory
+    %tr
+      %th== Year
+      %th== Week
+      %th== Matchup
+      %th== Difference
+  
+  %tbody
+    - @max_margin.each do |margin|
+      %tr
+        %td== #{margin.year}
+        %td== #{margin.week}
+        %td
+          = margin.name
+          == (#{margin.points})
+          vs
+          = margin.opponent
+          == (#{margin.opponent_points})
+        %td== #{margin.difference}
+
+%table{:id => "victory", :class => 'tablesorter'}
+  %thead
+    %tr
+      %td== Smallest Margin of Victory
+    %tr
+      %th== Year
+      %th== Week
+      %th== Matchup
+      %th== Difference
+
+  %tbody
+    - @min_margin.each do |margin|
+      %tr
+        %td== #{margin.year}
+        %td== #{margin.week}
+        %td
+          = margin.name
+          == (#{margin.points})
+          vs
+          = margin.opponent
+          == (#{margin.opponent_points})
+        %td== #{margin.difference}
+      
+%h2{:class => 'dotted'}
+  == Strength of Schedule
+%span{:style => "font-size:0.85em;"}
+  %i== (everyone has been in league and points are consistent as of '07)
+  
+%div{:style => "width:800px; height:400px;margin-top:10px;"}  
+  - high_chart("strength_chart", @strength_chart) do |h|
+    = "options.tooltip.formatter = function() { return this.x +'<br />'+this.series.name+' '+ this.y;}"    
+
+%table{:id => "strength_hardest", :class => 'tablesorter'}
+  %thead
+    %tr
+      %td== Hardest Schedule
+    %tr
+      %th== Year
+      %th== Name
+      %th== Rank
+      %th== Reg. Season Rank
+      %th== Weekly Average
+      %th== Weekly Opponent Average
+
+  %tbody
+    - @strengths.each do |strength|
+      - if @max_strength.include?(strength.avg_opponent_points)
+        %tr
+          %td== #{strength.year}
+          %td== #{strength.name}
+          %td== #{@ranks.collect{|u|u.rank if u.name == strength.name && u.year == strength.year}}
+          %td== #{@ranks.collect{|u|u.reg_season_rank if u.name == strength.name && u.year == strength.year}}
+          %td== #{number_with_precision(strength.avg_points, :precision => 2)}
+          %td== #{number_with_precision(strength.avg_opponent_points, :precision => 2)}
+     
+    - @all_strengths.each do |strength|
+      - if strength.avg_opponent_points == @all_strengths.collect(&:avg_opponent_points).max     
+        %tr
+          %td== Since 2007 
+          %td== #{strength.name}
+          %td== N/A
+          %td== N/A
+          %td== #{number_with_precision(strength.avg_points, :precision => 2)}
+          %td== #{number_with_precision(strength.avg_opponent_points, :precision => 2)}
+
+%table{:id => "strength_easiest", :class => 'tablesorter'}
+  %thead
+    %tr
+      %td== Easiest Schedule
+    %tr
+      %th== Year
+      %th== Name
+      %th== Rank
+      %th== Reg. Season Rank
+      %th== Weekly Average
+      %th== Weekly Opponent Average
+
+  %tbody
+    - @strengths.each do |strength|
+      - if @min_strength.include?(strength.avg_opponent_points)
+        %tr
+          %td== #{strength.year}
+          %td== #{strength.name}
+          %td== #{@ranks.collect{|u|u.rank if u.name == strength.name && u.year == strength.year}}
+          %td== #{@ranks.collect{|u|u.reg_season_rank if u.name == strength.name && u.year == strength.year}}
+          %td== #{number_with_precision(strength.avg_points, :precision => 2)}
+          %td== #{number_with_precision(strength.avg_opponent_points, :precision => 2)}
+    - @all_strengths.each do |strength|
+      - if strength.avg_opponent_points == @all_strengths.collect(&:avg_opponent_points).min     
+        %tr
+          %td== Since 2007 
+          %td== #{strength.name}
+          %td== N/A
+          %td== N/A
+          %td== #{number_with_precision(strength.avg_points, :precision => 2)}
+          %td== #{number_with_precision(strength.avg_opponent_points, :precision => 2)}
+          
+%span{:style => "font-size:0.9em"}
+  %i="Sort multiple columns simultaneously by holding down the shift key and clicking a second, third or even fourth column header"
+
+%table{:id => "strength", :class => 'tablesorter'}
+  %thead
+    %tr
+      %td== All
+    %tr
+      %th== Year
+      %th== Name
+      %th== Rank
+      %th== Reg. Season Rank
+      %th== Weekly Average
+      %th== Weekly Opponent Average
+
+  %tbody
+    - @strengths.each do |strength|
+      %tr
+        %td== #{strength.year}
+        %td== #{strength.name}
+        %td== #{@ranks.collect{|u|u.rank if u.name == strength.name && u.year == strength.year}}
+        %td== #{@ranks.collect{|u|u.reg_season_rank if u.name == strength.name && u.year == strength.year}}
+        %td== #{number_with_precision(strength.avg_points, :precision => 2)}
+        %td== #{number_with_precision(strength.avg_opponent_points, :precision => 2)}
+        
+    - @all_strengths.each do |strength|
+      %tr
+        %td== Since 2007
+        %td== #{strength.name}
+        %td== N/A
+        %td== N/A
+        %td== #{number_with_precision(strength.avg_points, :precision => 2)}
+        %td== #{number_with_precision(strength.avg_opponent_points, :precision => 2)}

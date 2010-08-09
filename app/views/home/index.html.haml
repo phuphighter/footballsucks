@@ -1,0 +1,28 @@
+= render :partial => "/home/nav.html.haml"
+  
+%h2{:class => "dotted"}
+  == Past Champions
+
+%table{:id => "league_avg", :class => 'tablesorter'}
+  %thead
+    %tr
+      %th== Name
+      %th== Year
+      %th== Winner Reg Season Rank
+      %th== Winner Draft Position
+      %th== Winner Total Points
+      %th== Averge Points for League
+  
+  %tbody
+    - @league_avg.each do |summary|  
+      %tr
+        %td== #{summary.name}
+        %td== #{summary.year}
+        %td== #{number_with_precision(summary.rank, :precision => 2)}
+        %td== #{summary.draft}
+        %td== #{number_with_precision(summary.points, :precision => 2)}
+        %td== #{number_with_precision(summary.league_points, :precision => 2)}
+  
+%div{:style => "width:800px; height:500px;"}        
+  - high_chart("champions_chart", @champion_chart) do |h|
+    = "options.tooltip.formatter = function() { return 'Year '+ this.x +'<br />'+this.series.name+' '+ this.y;}"

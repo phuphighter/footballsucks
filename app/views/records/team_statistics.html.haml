@@ -1,0 +1,84 @@
+= render :partial => "/home/nav.html.haml"
+
+%h2{:class => "dotted"}
+  == Team All-Time Averages
+
+%span{:style => "font-size:0.9em"}
+  %i="Sort multiple columns simultaneously by holding down the shift key and clicking a second, third or even fourth column header"
+
+%table{:id => "stats", :class => 'tablesorter'}
+  %thead
+    %tr
+      %th== Name
+      %th== Avg. Rank
+      %th== Avg. Reg. Season Rank
+      %th== Wins
+      %th== Losses
+      %th== Win %
+      %th== Total Points
+      %th== Points Per Year
+      %th== Championships
+      %th== Years Played
+      %th== Avg. Draft Position
+  
+  %tbody
+    - @all_time.each do |summary|
+      - if summary.years_played.to_i > 1
+  
+        %tr
+          %td== #{summary.name}
+          %td== #{summary.rank}
+          %td== #{number_with_precision(summary.reg_rank, :precision => 2)}
+          %td== #{summary.wins}
+          %td== #{summary.losses}
+          %td== #{number_to_percentage(summary.win_percent, :precision => 2)}
+          %td== #{summary.points}
+          %td== #{number_with_precision(summary.points_per_year, :precision => 2)}
+          %td== #{summary.championships}
+          %td== #{summary.years_played}
+          %td== #{summary.draft_position}
+        
+%h2{:class => "dotted"}
+  == Team History
+
+- form_tag "/records/team_statistics", :method => "get", :style => "margin:10px 0px 10px 0px;" do
+  = label_tag "Filer by name:"
+  = select_tag "name", "<option value='All'>All</option>"+options_for_select(@names, :selected => params[:name]), {:onchange => "this.form.submit();"}
+
+%span{:style => "font-size:0.9em"}
+  %i="Sort multiple columns simultaneously by holding down the shift key and clicking a second, third or even fourth column header"
+
+%table{:id => "history", :class => 'tablesorter'}
+  %thead
+    %tr
+      %th== Rank
+      %th== Reg. Season Rank
+      %th== Name
+      %th== Wins
+      %th== Losses
+      %th== Win %
+      %th== Points
+      %th== Draft Position
+      %th== Champion
+      %th== Year
+
+  %tbody
+    - @summaries.each do |summary|
+      - unless summary.reg_season_rank.nil?
+
+        %tr
+          %td== #{summary.rank}
+          %td== #{summary.reg_season_rank}
+          %td== #{summary.name}
+          %td== #{summary.wins}
+          %td== #{summary.losses}
+          %td== #{number_to_percentage(summary.win_percentage*100, :precision => 2)}
+          %td== #{summary.points}
+          %td== #{summary.draft_position}
+          %td== #{summary.champion}
+          %td== #{summary.year}
+
+- if params[:name] && params[:name] != "All"          
+  %div{:style => "width:800px; height:600px;"}        
+    - high_chart("points_chart", @points_chart) do |h|
+      = "options.tooltip.formatter = function() { return 'Year '+ this.x +'<br />'+this.series.name+' '+ this.y;}"
