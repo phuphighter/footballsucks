@@ -4,4 +4,4 @@ An application to keep track of my Yahoo! fantasy football league's historical a
 
 # Live URL
 
-http://footballsucks.phulogy.com
+[http://footballsucks.phulogy.com](http://footballsucks.phulogy.com)
